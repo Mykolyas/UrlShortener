@@ -1,0 +1,42 @@
+@model AboutViewModel
+@{
+    ViewData["Title"] = "About";
+}
+
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <h2>About URL Shortener</h2>
+        <hr />
+
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["Message"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (Model.IsAdmin)
+        {
+            <form asp-action="UpdateContent" method="post" class="mb-4">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label asp-for="Content" class="form-label">Content (HTML allowed)</label>
+                    <textarea asp-for="Content" class="form-control" rows="20" required></textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Content</button>
+            </form>
+            <hr />
+        }
+
+        <div class="about-content">
+            @Html.Raw(Model.Content)
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

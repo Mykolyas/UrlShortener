@@ -1,0 +1,60 @@
+@model List<UrlShortener.Models.ShortUrl>
+@{
+    ViewData["Title"] = "Short URLs";
+    var isAuthenticated = User.Identity?.IsAuthenticated == true;
+    var isAdmin = User.IsInRole("Admin");
+    var baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    
+    var initialUrls = Model.Select(u => new {
+        id = u.Id,
+        originalUrl = u.OriginalUrl,
+        shortCode = u.ShortCode,
+        shortUrl = $"{baseUrl}/r/{u.ShortCode}",
+        createdDate = u.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss"),
+        createdBy = u.CreatedBy?.UserName ?? "Unknown",
+        clickCount = u.ClickCount
+    }).ToList();
+}
+
+@Html.AntiForgeryToken()
+
+<div id="url-shortener-root"></div>
+
+@section Scripts {
+    <!-- Use built bundle (always use production build) -->
+    <script src="~/js/dist/url-shortener.js"></script>
+    
+    <script>
+        // Initialize React App with data from server
+        const initialUrls = @Html.Raw(Json.Serialize(initialUrls));
+        const isAuthenticated = @(isAuthenticated ? "true" : "false");
+        const isAdmin = @(isAdmin ? "true" : "false");
+        const currentUser = '@(User.Identity?.Name ?? "")';
+        const baseUrl = '@baseUrl';
+
+        const props = {
+            initialUrls: initialUrls,
+            isAuthenticated: isAuthenticated === true || isAuthenticated === "true",
+            isAdmin: isAdmin === true || isAdmin === "true",
+            currentUser: currentUser,
+            baseUrl: baseUrl
+        };
+
+        // Wait for the app to be loaded and initialize
+        function initializeApp() {
+            if (typeof window.initializeUrlShortenerApp === 'function') {
+                window.initializeUrlShortenerApp(props);
+            } else {
+                // Retry after a short delay
+                setTimeout(initializeApp, 100);
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            initializeApp();
+        }
+    </script>
+}
+

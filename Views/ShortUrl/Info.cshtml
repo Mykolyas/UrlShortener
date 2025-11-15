@@ -1,0 +1,40 @@
+@model UrlShortener.Models.ShortUrl
+@{
+    ViewData["Title"] = "Short URL Info";
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2>Short URL Information</h2>
+        <hr />
+
+        <dl class="row">
+            <dt class="col-sm-3">Original URL:</dt>
+            <dd class="col-sm-9">
+                <a href="@Model.OriginalUrl" target="_blank">@Model.OriginalUrl</a>
+            </dd>
+
+            <dt class="col-sm-3">Short URL:</dt>
+            <dd class="col-sm-9">
+                <a href="@ViewBag.ShortUrl" target="_blank">@ViewBag.ShortUrl</a>
+            </dd>
+
+            <dt class="col-sm-3">Short Code:</dt>
+            <dd class="col-sm-9"><code>@Model.ShortCode</code></dd>
+
+            <dt class="col-sm-3">Created By:</dt>
+            <dd class="col-sm-9">@(Model.CreatedBy?.UserName ?? "Unknown")</dd>
+
+            <dt class="col-sm-3">Created Date:</dt>
+            <dd class="col-sm-9">@Model.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss UTC")</dd>
+
+            <dt class="col-sm-3">Click Count:</dt>
+            <dd class="col-sm-9">@Model.ClickCount</dd>
+        </dl>
+
+        <div class="mt-4">
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>
+
