@@ -10,13 +10,16 @@ public class AccountController : Controller
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
 
     public AccountController(
         UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager)
+        SignInManager<ApplicationUser> signInManager,
+        RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;
+        _roleManager = roleManager;
     }
 
     [HttpGet]
@@ -49,6 +52,69 @@ public class AccountController : Controller
         }
 
         ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+        return View(model);
+    }
+
+    [HttpGet]
+    public IActionResult Register()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Register(RegisterViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        // Check if username already exists
+        var existingUser = await _userManager.FindByNameAsync(model.UserName);
+        if (existingUser != null)
+        {
+            ModelState.AddModelError(string.Empty, "Username already exists.");
+            return View(model);
+        }
+
+        // Check if email already exists
+        var existingEmail = await _userManager.FindByEmailAsync(model.Email);
+        if (existingEmail != null)
+        {
+            ModelState.AddModelError(string.Empty, "Email already registered.");
+            return View(model);
+        }
+
+        // Create new user
+        var user = new ApplicationUser
+        {
+            UserName = model.UserName,
+            Email = model.Email
+        };
+
+        var result = await _userManager.CreateAsync(user, model.Password);
+
+        if (result.Succeeded)
+        {
+            // Assign "User" role to the new user
+            if (await _roleManager.RoleExistsAsync("User"))
+            {
+                await _userManager.AddToRoleAsync(user, "User");
+            }
+
+            // Automatically sign in the user
+            await _signInManager.SignInAsync(user, isPersistent: false);
+            
+            return RedirectToAction(nameof(ShortUrlController.Index), "ShortUrl");
+        }
+
+        // Add errors from identity result
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+
         return View(model);
     }
 

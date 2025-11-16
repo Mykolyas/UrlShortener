@@ -3,10 +3,17 @@
     ViewData["Title"] = "About";
 }
 
-<div class="row">
+<div class="row about-page">
     <div class="col-md-10 offset-md-1">
-        <h2>About URL Shortener</h2>
-        <hr />
+        <div class="about-header">
+            <h2 class="about-title">
+                <i class="bi bi-info-circle"></i>
+                About URL Shortener
+            </h2>
+            <p class="about-subtitle">
+                A short description of how my URL Shortener works under the hood.
+            </p>
+        </div>
 
         @if (TempData["Message"] != null)
         {
@@ -38,5 +45,17 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const alert = document.querySelector('.alert.alert-success');
+            if (alert) {
+                setTimeout(() => {
+                    const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                    bsAlert.close();
+                }, 3000);
+            }
+        });
+    </script>
 }
 

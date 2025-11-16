@@ -82,33 +82,33 @@ public class AboutController : Controller
 
         // Default content explaining the URL shortening algorithm
         return @"<h2>URL Shortener Algorithm</h2>
-<p>This URL Shortener application uses a <strong>Base62 encoding</strong> algorithm to generate short codes for URLs.</p>
+<p>In this project, the URL Shortener is powered by a <strong>Base62</strong>-based algorithm that generates short, unique codes for every URL.</p>
 
 <h3>How it works:</h3>
 <ol>
-    <li><strong>Input Validation:</strong> When a URL is submitted, the system validates that it's a proper URL format.</li>
-    <li><strong>Duplicate Check:</strong> The system checks if the URL already exists in the database. If it does, an error is returned.</li>
-    <li><strong>Short Code Generation:</strong> A unique 6-character short code is generated using Base62 encoding (0-9, A-Z, a-z).</li>
-    <li><strong>Uniqueness Verification:</strong> The system ensures the generated code doesn't already exist in the database. If it does, a new code is generated.</li>
-    <li><strong>Storage:</strong> The original URL, short code, creator information, and timestamp are stored in the database.</li>
-    <li><strong>Redirection:</strong> When someone accesses the short URL (r/{shortCode}), the system looks up the original URL and redirects them, while incrementing the click count.</li>
+    <li><strong>Input Validation:</strong> When a user submits a link, the system first checks whether it's a valid URL format.</li>
+    <li><strong>Duplicate Check:</strong> Before creating anything new, the system checks whether the URL already exists in the database; otherwise, the user gets an error.</li>
+    <li><strong>Short Code Generation:</strong> For a new entry, the application creates a 6-character code using Base62.</li>
+    <li><strong>Uniqueness Verification:</strong> If the generated code somehow already exists, a new one is generated until a unique code is found.</li>
+    <li><strong>Saving the Data:</strong> The original URL, the short code, creator info, and creation timestamp are all stored in the database.</li>
+    <li><strong>Redirection:</strong> When someone opens a short URL, the app looks up the original link, redirects the user, and increments the click counter.</li>
 </ol>
 
 <h3>Technical Details:</h3>
 <ul>
-    <li>Short codes are 6 characters long, providing 62^6 = 56,800,235,584 possible combinations</li>
-    <li>Base62 encoding uses characters: 0-9, A-Z, a-z</li>
-    <li>Each URL is unique - duplicate URLs return an error message</li>
-    <li>Click tracking is implemented to monitor usage</li>
-    <li>Real-time updates using React for a seamless user experience</li>
+    <li>Each short code is exactly 6 characters long.</li>
+    <li>Base62 includes the characters: 0–9, A–Z, and a–z.</li>
+    <li>Every URL must be unique — duplicates are not allowed.</li>
+    <li>Click tracking is implemented for monitoring usage.</li>
+    <li>Real-time updates are handled through React for a smoother user experience.</li>
 </ul>
 
 <h3>Security Features:</h3>
 <ul>
-    <li>Authentication required for creating, viewing details, and deleting URLs</li>
-    <li>Users can only delete URLs they created</li>
-    <li>Administrators have full access to all URLs</li>
-    <li>Anonymous users can view the table and use shortened URLs</li>
+    <li>Authentication is required to create URLs, view details, or delete entries.</li>
+    <li>Users can only delete URLs they personally created.</li>
+    <li>Administrators have full access to all records.</li>
+    <li>Anonymous users can view the table and use any short links.</li>
 </ul>";
     }
 }

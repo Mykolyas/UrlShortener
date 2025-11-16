@@ -32,11 +32,96 @@ body {
   background-color: #ffffff;
 }
 
+/* Top navigation bar */
+.main-navbar {
+  background: linear-gradient(135deg, #ffffff 0%, #f3f4ff 40%, #e4e9ff 100%);
+  border-bottom: 1px solid #e2e6f0;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+.main-navbar .navbar-brand {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #4a4e69;
+}
+
+.main-navbar .navbar-brand:hover {
+  color: #343a8a;
+}
+
+.main-navbar .nav-link {
+  position: relative;
+  font-weight: 500;
+  color: #555970 !important;
+  padding-inline: 0.9rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.main-navbar .nav-link:hover {
+  color: #343a8a !important;
+  transform: translateY(-1px);
+}
+
+.main-navbar .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.25rem;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.2s ease;
+}
+
+.main-navbar .nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+.main-navbar .navbar-text {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 999px;
+  padding: 0.25rem 0.9rem;
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.about-page {
+  margin-top: 1.5rem;
+}
+
+.about-header {
+  margin-bottom: 1.5rem;
+}
+
+.about-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #343a8a;
+  margin-bottom: 0.25rem;
+}
+
+.about-title i {
+  font-size: 1.4rem;
+}
+
+.about-subtitle {
+  margin: 0;
+  color: #6c757d;
+  font-size: 0.95rem;
+}
+
 .about-content {
   background-color: #f8f9fa;
   padding: 2rem;
-  border-radius: 0.5rem;
-  margin-top: 2rem;
+  border-radius: 0.75rem;
+  margin-top: 1rem;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+  border: 1px solid #e9ecef;
 }
 
 .table {
@@ -45,6 +130,111 @@ body {
 
 .card {
   margin-bottom: 2rem;
+}
+
+/* Short URL details view */
+.short-info-card {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  padding: 1.75rem 1.75rem 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.short-info-header {
+  margin-bottom: 1.5rem;
+}
+
+.short-info-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #343a8a;
+}
+
+.short-info-title i {
+  font-size: 1.5rem;
+}
+
+.short-info-subtitle {
+  margin: 0;
+  color: #6c757d;
+  font-size: 0.95rem;
+}
+
+.short-info-body {
+  border-top: 1px solid #f1f3f5;
+  border-bottom: 1px solid #f1f3f5;
+  padding-block: 1.25rem;
+}
+
+.short-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding-block: 0.6rem;
+}
+
+.short-info-row + .short-info-row {
+  border-top: 1px dashed #edf0f4;
+}
+
+.short-info-row--last {
+  padding-bottom: 0.2rem;
+}
+
+.short-info-label {
+  flex: 0 0 140px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.short-info-value {
+  flex: 1;
+  word-break: break-all;
+}
+
+.short-info-url {
+  color: #495057;
+  text-decoration: none;
+}
+
+.short-info-url:hover {
+  color: #667eea;
+  text-decoration: underline;
+}
+
+.short-info-url--short {
+  font-weight: 600;
+  color: #667eea;
+}
+
+.short-info-code {
+  background-color: #f8f9ff;
+  padding: 0.15rem 0.45rem;
+  border-radius: 0.35rem;
+  border: 1px solid #dfe3ff;
+}
+
+.short-info-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 768px) {
+  .short-info-row {
+    flex-direction: column;
+  }
+
+  .short-info-label {
+    flex-basis: auto;
+  }
 }
 
 /* URL Shortener React Styles */
@@ -273,9 +463,11 @@ body {
   font-size: 0.875rem;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.25rem;
   transition: all 0.2s ease;
   border: none;
+  min-width: 75px;
 }
 
 .action-btn.btn-info {
@@ -292,6 +484,7 @@ body {
 .action-btn.btn-danger {
   background-color: #dc3545;
   color: #ffffff;
+  padding: 0.4rem 0.4rem;
 }
 
 .action-btn.btn-danger:hover:not(:disabled) {

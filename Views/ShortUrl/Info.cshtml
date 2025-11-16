@@ -4,36 +4,69 @@
 }
 
 <div class="row">
-    <div class="col-md-8 offset-md-2">
-        <h2>Short URL Information</h2>
-        <hr />
+    <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+        <div class="short-info-card">
+            <div class="short-info-header">
+                <h2 class="short-info-title">
+                    <i class="bi bi-link-45deg"></i>
+                    Short URL details
+                </h2>
+                <p class="short-info-subtitle">
+                    Here is a quick overview of the link and how it is stored in the system.
+                </p>
+            </div>
 
-        <dl class="row">
-            <dt class="col-sm-3">Original URL:</dt>
-            <dd class="col-sm-9">
-                <a href="@Model.OriginalUrl" target="_blank">@Model.OriginalUrl</a>
-            </dd>
+            <div class="short-info-body">
+                <div class="short-info-row">
+                    <span class="short-info-label">Original URL</span>
+                    <a href="@Model.OriginalUrl" target="_blank" class="short-info-value short-info-url">
+                        @Model.OriginalUrl
+                    </a>
+                </div>
 
-            <dt class="col-sm-3">Short URL:</dt>
-            <dd class="col-sm-9">
-                <a href="@ViewBag.ShortUrl" target="_blank">@ViewBag.ShortUrl</a>
-            </dd>
+                <div class="short-info-row">
+                    <span class="short-info-label">Short URL</span>
+                    <a href="@ViewBag.ShortUrl" target="_blank" class="short-info-value short-info-url short-info-url--short">
+                        @ViewBag.ShortUrl
+                    </a>
+                </div>
 
-            <dt class="col-sm-3">Short Code:</dt>
-            <dd class="col-sm-9"><code>@Model.ShortCode</code></dd>
+                <div class="short-info-row">
+                    <span class="short-info-label">Short code</span>
+                    <span class="short-info-value">
+                        <code class="short-info-code">@Model.ShortCode</code>
+                    </span>
+                </div>
 
-            <dt class="col-sm-3">Created By:</dt>
-            <dd class="col-sm-9">@(Model.CreatedBy?.UserName ?? "Unknown")</dd>
+                <div class="short-info-row">
+                    <span class="short-info-label">Created by</span>
+                    <span class="short-info-value">
+                        <span class="badge bg-secondary">@(Model.CreatedBy?.UserName ?? "Unknown")</span>
+                    </span>
+                </div>
 
-            <dt class="col-sm-3">Created Date:</dt>
-            <dd class="col-sm-9">@Model.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss UTC")</dd>
+                <div class="short-info-row">
+                    <span class="short-info-label">Created at</span>
+                    <span class="short-info-value text-muted">
+                        @Model.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss 'UTC'")
+                    </span>
+                </div>
 
-            <dt class="col-sm-3">Click Count:</dt>
-            <dd class="col-sm-9">@Model.ClickCount</dd>
-        </dl>
+                <div class="short-info-row short-info-row--last">
+                    <span class="short-info-label">Click count</span>
+                    <span class="short-info-value">
+                        <span class="badge bg-info text-dark">
+                            <i class="bi bi-eye"></i> @Model.ClickCount
+                        </span>
+                    </span>
+                </div>
+            </div>
 
-        <div class="mt-4">
-            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            <div class="short-info-footer">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to list
+                </a>
+            </div>
         </div>
     </div>
 </div>

@@ -68,7 +68,7 @@ const UrlShortenerApp = ({ initialUrls, isAuthenticated, isAdmin, currentUser, b
         if (errorMessage) {
             const timer = setTimeout(() => {
                 setErrorMessage('');
-            }, 3000); // Hide after 3 seconds
+            }, 3000);
 
             return () => {
                 clearTimeout(timer);

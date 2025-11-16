@@ -65,7 +65,7 @@ app.MapControllerRoute(
     pattern: "r/{shortCode}",
     defaults: new { controller = "ShortUrl", action = "Redirect" });
 
-// Initialize roles and default admin user
+// Seed database with default data
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -73,72 +73,12 @@ using (var scope = app.Services.CreateScope())
     
     try
     {
-        // Ensure database is created first
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        logger.LogInformation("Ensuring database exists...");
-        await context.Database.EnsureCreatedAsync();
-        logger.LogInformation("Database ready.");
-
-        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-
-        // Create roles
-        if (!await roleManager.RoleExistsAsync("Admin"))
-        {
-            await roleManager.CreateAsync(new IdentityRole("Admin"));
-            logger.LogInformation("Admin role created.");
-        }
-        if (!await roleManager.RoleExistsAsync("User"))
-        {
-            await roleManager.CreateAsync(new IdentityRole("User"));
-            logger.LogInformation("User role created.");
-        }
-
-        // Create default admin user
-        var adminUser = await userManager.FindByNameAsync("admin");
-        if (adminUser == null)
-        {
-            adminUser = new ApplicationUser
-            {
-                UserName = "admin",
-                Email = "admin@admin.com"
-            };
-            var result = await userManager.CreateAsync(adminUser, "admin");
-            if (result.Succeeded)
-            {
-                await userManager.AddToRoleAsync(adminUser, "Admin");
-                logger.LogInformation("Default admin user created.");
-            }
-            else
-            {
-                logger.LogWarning("Failed to create admin user: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
-            }
-        }
-
-        // Create default regular user
-        var regularUser = await userManager.FindByNameAsync("user");
-        if (regularUser == null)
-        {
-            regularUser = new ApplicationUser
-            {
-                UserName = "user",
-                Email = "user@user.com"
-            };
-            var result = await userManager.CreateAsync(regularUser, "user");
-            if (result.Succeeded)
-            {
-                await userManager.AddToRoleAsync(regularUser, "User");
-                logger.LogInformation("Default regular user created.");
-            }
-            else
-            {
-                logger.LogWarning("Failed to create regular user: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
-            }
-        }
+        await DataSeeder.SeedAsync(services);
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "An error occurred while initializing the database.");
+        logger.LogError(ex, "An error occurred while seeding the database.");
+        
         // Re-throw in development to see the error
         if (app.Environment.IsDevelopment())
         {
