@@ -1,19 +1,8 @@
-@model List<UrlShortener.Models.ShortUrl>
+@model IReadOnlyList<UrlShortener.Models.Dto.ShortUrlSummaryDto>
 @{
     ViewData["Title"] = "Short URLs";
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
     var isAdmin = User.IsInRole("Admin");
-    var baseUrl = $"{Context.Request.Scheme}://{Context.Request.Host}";
-    
-    var initialUrls = Model.Select(u => new {
-        id = u.Id,
-        originalUrl = u.OriginalUrl,
-        shortCode = u.ShortCode,
-        shortUrl = $"{baseUrl}/r/{u.ShortCode}",
-        createdDate = u.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss"),
-        createdBy = u.CreatedBy?.UserName ?? "Unknown",
-        clickCount = u.ClickCount
-    }).ToList();
 }
 
 @Html.AntiForgeryToken()
@@ -26,18 +15,20 @@
     
     <script>
         // Initialize React App with data from server
-        const initialUrls = @Html.Raw(Json.Serialize(initialUrls));
+        const initialUrls = @Html.Raw(Json.Serialize(Model));
         const isAuthenticated = @(isAuthenticated ? "true" : "false");
         const isAdmin = @(isAdmin ? "true" : "false");
         const currentUser = '@(User.Identity?.Name ?? "")';
-        const baseUrl = '@baseUrl';
+        const antiForgeryToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        const apiBaseUrl = '@Url.Content("~/api/short-urls")';
 
         const props = {
             initialUrls: initialUrls,
             isAuthenticated: isAuthenticated === true || isAuthenticated === "true",
             isAdmin: isAdmin === true || isAdmin === "true",
             currentUser: currentUser,
-            baseUrl: baseUrl
+            antiForgeryToken: antiForgeryToken,
+            apiBaseUrl: apiBaseUrl
         };
 
         // Wait for the app to be loaded and initialize

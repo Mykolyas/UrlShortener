@@ -20,10 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Tests\**" />
-    <Content Remove="Tests\**" />
-    <EmbeddedResource Remove="Tests\**" />
-    <None Remove="Tests\**" />
+    <Compile Remove="UrlShortener.Tests\**" />
+    <Content Remove="UrlShortener.Tests\**" />
+    <EmbeddedResource Remove="UrlShortener.Tests\**" />
+    <None Remove="UrlShortener.Tests\**" />
   </ItemGroup>
 
 </Project>

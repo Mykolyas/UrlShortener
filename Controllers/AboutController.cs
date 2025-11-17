@@ -49,7 +49,6 @@ public class AboutController : Controller
         {
             aboutContent = new AboutContent
             {
-                // Id will be generated automatically by the database
                 Content = model.Content,
                 UpdatedBy = user?.UserName ?? "Admin",
                 LastUpdated = DateTime.UtcNow
@@ -61,7 +60,6 @@ public class AboutController : Controller
             aboutContent.Content = model.Content;
             aboutContent.UpdatedBy = user?.UserName ?? "Admin";
             aboutContent.LastUpdated = DateTime.UtcNow;
-            // Mark as modified to ensure EF tracks the changes
             _context.AboutContents.Update(aboutContent);
         }
 
@@ -80,7 +78,6 @@ public class AboutController : Controller
             return aboutContent.Content;
         }
 
-        // Default content explaining the URL shortening algorithm
         return @"<h2>URL Shortener Algorithm</h2>
 <p>In this project, the URL Shortener is powered by a <strong>Base62</strong>-based algorithm that generates short, unique codes for every URL.</p>
 

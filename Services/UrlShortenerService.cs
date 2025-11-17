@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using UrlShortener.Data;
 using UrlShortener.Models;
+using UrlShortener.Models.Results;
 
 namespace UrlShortener.Services;
 
@@ -15,24 +16,21 @@ public class UrlShortenerService : IUrlShortenerService
         _context = context;
     }
 
-    public async Task<ShortUrl?> CreateShortUrlAsync(string originalUrl, string userId)
+    public async Task<ShortUrlCreationResult> CreateShortUrlAsync(string originalUrl, string userId)
     {
-        // Validate URL format and characters
         if (!IsValidUrl(originalUrl))
         {
-            return null; // Invalid URL
+            return ShortUrlCreationResult.InvalidUrl(originalUrl);
         }
 
-        // Check if URL already exists
         var existingUrl = await _context.ShortUrls
             .FirstOrDefaultAsync(u => u.OriginalUrl == originalUrl);
 
         if (existingUrl != null)
         {
-            return null; // URL already exists
+            return ShortUrlCreationResult.Duplicate(originalUrl);
         }
 
-        // Generate unique short code
         string shortCode;
         do
         {
@@ -50,7 +48,7 @@ public class UrlShortenerService : IUrlShortenerService
         _context.ShortUrls.Add(shortUrl);
         await _context.SaveChangesAsync();
 
-        return shortUrl;
+        return ShortUrlCreationResult.Success(shortUrl);
     }
 
     public async Task<ShortUrl?> GetByShortCodeAsync(string shortCode)
@@ -76,7 +74,6 @@ public class UrlShortenerService : IUrlShortenerService
             return false;
         }
 
-        // Check permissions: admin can delete all, users can only delete their own
         if (!isAdmin && url.CreatedById != userId)
         {
             return false;
@@ -108,7 +105,6 @@ public class UrlShortenerService : IUrlShortenerService
 
     private string GenerateShortCode()
     {
-        // Generate random short code using Base62 encoding
         var random = new Random();
         var chars = new char[ShortCodeLength];
 
@@ -127,30 +123,22 @@ public class UrlShortenerService : IUrlShortenerService
             return false;
         }
 
-        // Try to parse as URI
         if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
         {
             return false;
         }
 
-        // Check if scheme is http or https
         if (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps)
         {
             return false;
         }
 
-        // Check if URL contains only ASCII characters (or properly encoded)
-        // This prevents issues with HTTP headers
         try
         {
-            // Try to encode the URL - if it contains invalid characters, this will fail
             var encoded = Uri.EscapeUriString(url);
             
-            // Check if the URL can be used in HTTP Location header
-            // Location header must contain only ASCII characters
             foreach (char c in url)
             {
-                // Allow ASCII printable characters and common URL characters
                 if (c > 127 && !IsValidNonAsciiInUrl(c))
                 {
                     return false;
@@ -167,9 +155,7 @@ public class UrlShortenerService : IUrlShortenerService
 
     private bool IsValidNonAsciiInUrl(char c)
     {
-        // Allow some common non-ASCII characters that are typically URL-encoded
-        // But in practice, we should require proper URL encoding
-        return false; // For safety, require ASCII only or proper encoding
+        return false;
     }
 
     public async Task<bool> IsUrlValidForRedirect(string url)
@@ -186,8 +172,6 @@ public class UrlShortenerService : IUrlShortenerService
                 return false;
             }
 
-            // Check if URL can be used in HTTP Location header
-            // Location header must be ASCII
             foreach (char c in url)
             {
                 if (c > 127)

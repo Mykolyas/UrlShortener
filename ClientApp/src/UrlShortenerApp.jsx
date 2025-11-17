@@ -1,16 +1,29 @@
 import { useState, useEffect } from 'react';
 
-const UrlShortenerApp = ({ initialUrls, isAuthenticated, isAdmin, currentUser, baseUrl }) => {
+const UrlShortenerApp = ({
+    initialUrls = [],
+    isAuthenticated,
+    isAdmin,
+    currentUser,
+    antiForgeryToken,
+    apiBaseUrl = '/api/short-urls'
+}) => {
     const [urls, setUrls] = useState(initialUrls || []);
     const [newUrl, setNewUrl] = useState('');
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [deleting, setDeleting] = useState({});
 
+    const csrfHeaders = antiForgeryToken
+        ? { 'RequestVerificationToken': antiForgeryToken }
+        : {};
+
     // Function to fetch updated URLs from server
     const fetchUrls = async () => {
         try {
-            const response = await fetch('/ShortUrl/GetAllUrls');
+            const response = await fetch(apiBaseUrl, {
+                credentials: 'same-origin'
+            });
             if (response.ok) {
                 const data = await response.json();
                 setUrls(data);
@@ -92,23 +105,25 @@ const UrlShortenerApp = ({ initialUrls, isAuthenticated, isAdmin, currentUser, b
         setErrorMessage('');
 
         try {
-            const response = await fetch('/ShortUrl/CreateShortUrl', {
+            const response = await fetch(apiBaseUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-Requested-With': 'XMLHttpRequest',
+                    ...csrfHeaders
                 },
+                credentials: 'same-origin',
                 body: JSON.stringify({ originalUrl: newUrl })
             });
 
-            const data = await response.json();
-
-            if (data.success) {
-                setUrls(prevUrls => [data.data, ...prevUrls]);
+            if (response.ok) {
+                const created = await response.json();
+                setUrls(prevUrls => [created, ...prevUrls]);
                 setNewUrl('');
                 setErrorMessage('');
             } else {
-                setErrorMessage(data.message || 'Error creating short URL');
+                const errorPayload = await response.json().catch(() => ({}));
+                setErrorMessage(errorPayload.message || 'Error creating short URL');
             }
         } catch (error) {
             setErrorMessage('Error creating short URL. Please try again.');
@@ -126,19 +141,20 @@ const UrlShortenerApp = ({ initialUrls, isAuthenticated, isAdmin, currentUser, b
         setDeleting(prev => ({ ...prev, [id]: true }));
 
         try {
-            const response = await fetch(`/ShortUrl/Delete?id=${id}`, {
+            const response = await fetch(`${apiBaseUrl}/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
+                    'X-Requested-With': 'XMLHttpRequest',
+                    ...csrfHeaders
+                },
+                credentials: 'same-origin'
             });
 
-            const data = await response.json();
-
-            if (data.success) {
+            if (response.ok) {
                 setUrls(prevUrls => prevUrls.filter(url => url.id !== id));
             } else {
-                alert(data.message || 'Error deleting URL');
+                const errorPayload = await response.json().catch(() => ({}));
+                alert(errorPayload.message || 'Error deleting URL');
             }
         } catch (error) {
             alert('Error deleting URL. Please try again.');

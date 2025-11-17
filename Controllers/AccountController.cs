@@ -70,7 +70,6 @@ public class AccountController : Controller
             return View(model);
         }
 
-        // Check if username already exists
         var existingUser = await _userManager.FindByNameAsync(model.UserName);
         if (existingUser != null)
         {
@@ -78,7 +77,6 @@ public class AccountController : Controller
             return View(model);
         }
 
-        // Check if email already exists
         var existingEmail = await _userManager.FindByEmailAsync(model.Email);
         if (existingEmail != null)
         {
@@ -86,7 +84,6 @@ public class AccountController : Controller
             return View(model);
         }
 
-        // Create new user
         var user = new ApplicationUser
         {
             UserName = model.UserName,
@@ -97,19 +94,16 @@ public class AccountController : Controller
 
         if (result.Succeeded)
         {
-            // Assign "User" role to the new user
             if (await _roleManager.RoleExistsAsync("User"))
             {
                 await _userManager.AddToRoleAsync(user, "User");
             }
 
-            // Automatically sign in the user
             await _signInManager.SignInAsync(user, isPersistent: false);
             
             return RedirectToAction(nameof(ShortUrlController.Index), "ShortUrl");
         }
 
-        // Add errors from identity result
         foreach (var error in result.Errors)
         {
             ModelState.AddModelError(string.Empty, error.Description);

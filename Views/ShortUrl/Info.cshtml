@@ -1,4 +1,4 @@
-@model UrlShortener.Models.ShortUrl
+@model UrlShortener.Models.ViewModels.ShortUrlDetailsViewModel
 @{
     ViewData["Title"] = "Short URL Info";
 }
@@ -26,8 +26,8 @@
 
                 <div class="short-info-row">
                     <span class="short-info-label">Short URL</span>
-                    <a href="@ViewBag.ShortUrl" target="_blank" class="short-info-value short-info-url short-info-url--short">
-                        @ViewBag.ShortUrl
+                    <a href="@Model.ShortUrl" target="_blank" class="short-info-value short-info-url short-info-url--short">
+                        @Model.ShortUrl
                     </a>
                 </div>
 
@@ -41,7 +41,7 @@
                 <div class="short-info-row">
                     <span class="short-info-label">Created by</span>
                     <span class="short-info-value">
-                        <span class="badge bg-secondary">@(Model.CreatedBy?.UserName ?? "Unknown")</span>
+                        <span class="badge bg-secondary">@Model.CreatedBy</span>
                     </span>
                 </div>
 

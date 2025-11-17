@@ -25,20 +25,17 @@ public static class DataSeeder
         
         try
         {
-            // Ensure database is created
             var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-            logger.LogInformation("Ensuring database exists...");
-            await context.Database.EnsureCreatedAsync();
-            logger.LogInformation("Database ready.");
+            logger.LogInformation("Applying pending migrations...");
+            await context.Database.MigrateAsync();
+            logger.LogInformation("Database is up to date.");
 
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            // Create roles
             await EnsureRoleExistsAsync(roleManager, AdminRole, logger);
             await EnsureRoleExistsAsync(roleManager, UserRole, logger);
 
-            // Create default users
             await EnsureUserExistsAsync(
                 userManager, 
                 AdminUsername, 

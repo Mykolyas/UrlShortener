@@ -1,10 +1,11 @@
 using UrlShortener.Models;
+using UrlShortener.Models.Results;
 
 namespace UrlShortener.Services;
 
 public interface IUrlShortenerService
 {
-    Task<ShortUrl?> CreateShortUrlAsync(string originalUrl, string userId);
+    Task<ShortUrlCreationResult> CreateShortUrlAsync(string originalUrl, string userId);
     Task<ShortUrl?> GetByShortCodeAsync(string shortCode);
     Task<List<ShortUrl>> GetAllUrlsAsync();
     Task<bool> DeleteUrlAsync(int id, string userId, bool isAdmin);
